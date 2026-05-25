@@ -1,15 +1,13 @@
-# Файлы сборки
 Debug/
 Release/
 build/
+Binaries/
 
-# Настройки среды Eclipse
 .settings/
 .project
 .cproject
 .mxproject
 
-# Прочее
 *.elf
 *.bin
 *.hex
