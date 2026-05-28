@@ -165,5 +165,7 @@ DMA же автоматически разнесет значения осей X
 * До упора вверх: X: 100% | Y: 100% | Button: 0
 * При нажатии на стик: X: 100% | Y: 100% | Button: 1
 
+![Рисунок 1](Pictures/Joystick_in_console_with_%.gif) 
 
+![Рисунок 1](Pictures/Joystick_with_LED.gif)
 
