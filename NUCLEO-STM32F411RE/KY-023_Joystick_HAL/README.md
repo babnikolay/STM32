@@ -212,7 +212,8 @@ KY-011 не имеет встроенной микросхемы — это пр
    6. Сохраните проект (Ctrl + S), чтобы CubeIDE перегенерировал код создал структуру htim3.  
 
 
-<img width="3184" height="5664" alt="20260527_164317" src="https://github.com/user-attachments/assets/fd5d6d15-53f2-405d-ba58-e816ee3be7c2" />  
+ <img width="2803" height="2409" alt="20260527_164317" src="https://github.com/user-attachments/assets/65c1a45b-725f-464e-afdc-518dda1de839" />  
+
 
 ## Как теперь ведет себя модуль KY-011:  
 
@@ -222,7 +223,8 @@ KY-011 не имеет встроенной микросхемы — это пр
 * Движение по диагонали: Оба кристалла светятся одновременно, формируя красивый желтый или оранжевый цвет в зависимости от угла наклона.  
 
 
-<img width="388" height="692" alt="Joystick_with_LED" src="https://github.com/user-attachments/assets/99afaede-7627-4fa2-8229-d78f8bda7c7d" />  
+
+
 
 ---  
 
