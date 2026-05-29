@@ -104,12 +104,17 @@ uint32_t Read_ADC_Channel(uint32_t channel) {
  */
 int main(void) {
 	/* USER CODE BEGIN 1 */
-	// Принудительно включаем тактирование Порта C (на всякий случай)
+	// 1. Включаем тактирование Порта C и Таймера 3 напрямую в регистрах
 	__HAL_RCC_GPIOC_CLK_ENABLE();
+	__HAL_RCC_TIM3_CLK_ENABLE();
 
-	// Настраиваем пин PC7 как обычный выход (GPIO Output) напрямую через регистры
-	GPIOC->MODER &= ~(3 << (7 * 2)); // Очищаем старый режим ножки 7
-	GPIOC->MODER |= (1 << (7 * 2)); // Устанавливаем режим 01 (General purpose output mode)
+	// 2. Переводим пин PC7 в режим альтернативной функции (ШИМ таймера)
+	GPIOC->MODER &= ~(3 << (7 * 2)); // Очищаем старый режим
+	GPIOC->MODER |= (2 << (7 * 2)); // Устанавливаем режим 10 (Alternate function mode)
+
+	// 3. Указываем, что альтернативная функция для PC7 — это именно TIM3 (AF02)
+	GPIOC->AFR[0] &= ~(0xF << (7 * 4)); // Очищаем регистр альтернативных функций для пина 7
+	GPIOC->AFR[0] |= (2 << (7 * 4));   // Записываем код AF2 (Таймер TIM3)
 	/* USER CODE END 1 */
 
 	/* MCU Configuration--------------------------------------------------------*/
@@ -136,11 +141,13 @@ int main(void) {
 	MX_TIM3_Init();
 
 	/* USER CODE BEGIN 2 */
-//	HAL_ADC_Start_DMA(&hadc1, (uint32_t*) adc_buffer, 2);
-	// Запускаем генерацию ШИМ на обоих каналах таймера 3
+	HAL_ADC_Start(&hadc1);
+
+	// Запускаем генерацию ШИМ на втором канале таймера 3
 //	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
 	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
 	/* USER CODE END 2 */
+
 
 	/* Infinite loop */
 	/* USER CODE BEGIN WHILE */
@@ -192,15 +199,23 @@ int main(void) {
 			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET);
 		}
 
-		// 5. НАДЕЖНОЕ ПРОГРАММНОЕ УПРАВЛЕНИЕ ВЫЖИВШИМ КРАСНЫМ СВЕТОДИОДОМ
-		// Если джойстик отклонен влево или вправо (по оси X) более чем на 30%
-		if (abs(x_percent) > 30) {
-			// Подаем 3.3В на ножку PC7 — красный светодиод ярко загорается!
-			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_7, GPIO_PIN_SET);
-		} else {
-			// Джойстик в центре (внутри мертвой зоны) — полностью гасим светодиод
-			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_7, GPIO_PIN_RESET);
-		}
+//		// 5. НАДЕЖНОЕ ПРОГРАММНОЕ УПРАВЛЕНИЕ ВЫЖИВШИМ КРАСНЫМ СВЕТОДИОДОМ
+//		// Если джойстик отклонен влево или вправо (по оси X) более чем на 30%
+//		if (abs(x_percent) > 30) {
+//			// Подаем 3.3В на ножку PC7 — красный светодиод ярко загорается!
+//			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_7, GPIO_PIN_SET);
+//		} else {
+//			// Джойстик в центре (внутри мертвой зоны) — полностью гасим светодиод
+//			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_7, GPIO_PIN_RESET);
+//		}
+//
+		// 5. ПЛАВНОЕ УПРАВЛЕНИЕ ШИМ-МОДУЛЕМ (Переводим проценты в яркость)
+		// Превращаем проценты оси X (-100...100%) в шаги таймера от 0 до 999
+		uint32_t pwm_x = (abs(x_percent) * 999) / 100;
+
+		// Записываем значение в регистр сравнения второго канала таймера (пин PC7)
+		__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, pwm_x);
+
 
 		// 6. Вывод рабочих данных в UART (оставляем как есть)
 		int len = sprintf(tx_buf, "X: %4ld%% | Y: %4ld%% | Button: %d\r\n",
