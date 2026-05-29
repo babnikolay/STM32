@@ -3,13 +3,14 @@
 #include <stdlib.h>
 
 // Константы проекта
-#define DEADZONE 80
+#define DEADZONE 30	// Мертвая зона
 
 // Глобальные переменные для хранения результатов
-int32_t x_percent = 0;
-int32_t y_percent = 0;
-uint8_t btn_state = 0;
-char tx_buf[64];
+int32_t x_percent = 0;     // Итоговый процент X (-100...100)
+int32_t y_percent = 0;     // Итоговый процент Y (-100...100)
+uint8_t btn_state = 0;     // Кнопка
+char tx_buf[100];          // Буфер для текста (задали четкий размер)
+//char tx_buf[64];
 
 // Прототипы функций
 void SetUp_Peripherals(void);

@@ -50,9 +50,9 @@ UART_HandleTypeDef huart2;
 /* USER CODE BEGIN PV */
 extern TIM_HandleTypeDef htim3;
 
-//uint16_t adc_buffer[2];    // Массив: adc_buffer[0] - X, adc_buffer[1] - Y
-int32_t x_percent = 0;     // �?тоговый процент X (-100...100)
-int32_t y_percent = 0;     // �?тоговый процент Y (-100...100)
+//uint16_t adc_buffer[2];  // Массив: adc_buffer[0] - X, adc_buffer[1] - Y
+int32_t x_percent = 0;     // Итоговый процент X (-100...100)
+int32_t y_percent = 0;     // Итоговый процент Y (-100...100)
 uint8_t btn_state = 0;     // Кнопка
 char tx_buf[100];          // Буфер для текста (задали четкий размер)
 
